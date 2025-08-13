@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform, useInView } from '@/lib/motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRightIcon, StarIcon, ClockIcon, MapPinIcon, PhoneIcon } from '@heroicons/react/24/outline'

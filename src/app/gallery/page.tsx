@@ -1,10 +1,10 @@
-// FILE: src/app/gallery/page.tsx
 'use client'
 
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion' // ✅ use wrapper, not framer-motion directly
 import Image from 'next/image'
 import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import type { MouseEvent } from 'react'
 
 export default function GalleryPage() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null)
@@ -28,9 +28,10 @@ export default function GalleryPage() {
     { id: 'interior', name: 'Interior', count: galleryItems.filter(item => item.category === 'interior').length },
   ]
 
-  const filteredImages = activeCategory === 'all' 
-    ? galleryItems 
-    : galleryItems.filter(item => item.category === activeCategory)
+  const filteredImages =
+    activeCategory === 'all'
+      ? galleryItems
+      : galleryItems.filter(item => item.category === activeCategory)
 
   const openLightbox = (index: number) => {
     setSelectedImage(index)
@@ -150,7 +151,7 @@ export default function GalleryPage() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()} // ✅ typed
             >
               <div className="relative aspect-auto max-h-[80vh] rounded-lg overflow-hidden">
                 <Image

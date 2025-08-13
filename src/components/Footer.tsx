@@ -1,7 +1,6 @@
 // FILE: src/components/Footer.tsx
 'use client'
-
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import Link from 'next/link'
 import { MapPinIcon, PhoneIcon, EnvelopeIcon, ClockIcon } from '@heroicons/react/24/outline'
 import { UtensilsIcon, FacebookIcon, InstagramIcon, TwitterIcon } from 'lucide-react'

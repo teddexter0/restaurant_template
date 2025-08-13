@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import Script from 'next/script'
 import { GA_TRACKING_ID } from '@/lib/gtag'
 
+// Fonts
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ 
   subsets: ['latin'],
@@ -19,7 +20,11 @@ const dancingScript = Dancing_Script({
   variable: '--font-script'
 })
 
+// Metadata
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : 'http://localhost:3000'),
   title: 'Savoro Restaurant - Exquisite Dining Experience',
   description: 'Experience culinary excellence at Savoro Restaurant. Fresh ingredients, innovative dishes, and exceptional service in an elegant atmosphere.',
   keywords: 'restaurant, fine dining, culinary, gourmet, food, dining experience',
@@ -39,11 +44,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable} ${dancingScript.variable}`}>
       <head>
@@ -58,14 +59,11 @@ export default function RootLayout({
               id="gtag-init"
               strategy="afterInteractive"
               dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${GA_TRACKING_ID}', {
-                    page_path: window.location.pathname,
-                  });
-                `,
+                __html:
+                  "window.dataLayer=window.dataLayer||[];" +
+                  "function gtag(){dataLayer.push(arguments);}" +
+                  "gtag('js', new Date());" +
+                  `gtag('config', '${GA_TRACKING_ID}', {page_path: window.location.pathname});`
               }}
             />
           </>
@@ -73,9 +71,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} bg-warm-50 min-h-screen overflow-x-hidden`}>
         <Header />
-        <main className="relative">
-          {children}
-        </main>
+        <main className="relative">{children}</main>
         <Footer />
       </body>
     </html>
