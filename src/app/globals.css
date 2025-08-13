@@ -1,26 +1,191 @@
-@import "tailwindcss";
+/* FILE: src/app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply text-secondary-800 leading-relaxed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    @apply font-bold text-secondary-900;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl;
+  }
+
+  .script-font {
+    font-family: 'Dancing Script', cursive;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-warm-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary-400 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-500;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply bg-accent-500 hover:bg-accent-600 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105;
+  }
+
+  .card {
+    @apply bg-white/80 backdrop-blur-sm border border-warm-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6;
+  }
+
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24 px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent;
+  }
+
+  .hero-text {
+    @apply bg-gradient-to-r from-white via-warm-50 to-primary-100 bg-clip-text text-transparent;
+  }
+
+  /* Parallax Effects */
+  .parallax-slow {
+    transform: translateY(var(--parallax-slow, 0));
+  }
+
+  .parallax-medium {
+    transform: translateY(var(--parallax-medium, 0));
+  }
+
+  .parallax-fast {
+    transform: translateY(var(--parallax-fast, 0));
+  }
+
+  /* Progress Bar */
+  .progress-bar {
+    @apply h-1 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-300;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    @apply animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500;
+  }
+
+  /* Circular image portal */
+  .image-portal {
+    @apply relative overflow-hidden rounded-full border-4 border-white shadow-2xl;
+  }
+
+  .image-portal::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20 z-10;
+  }
+
+  /* Menu grid animations */
+  .menu-item {
+    @apply transform transition-all duration-300 hover:scale-105 hover:shadow-xl;
+  }
+
+  .menu-item:hover .menu-price {
+    @apply text-primary-600 scale-110;
+  }
+}
+
+@layer utilities {
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+  
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+
+  .animation-delay-800 {
+    animation-delay: 800ms;
+  }
+}
+
+/* Background patterns */
+.hero-pattern {
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(234, 124, 42, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(20, 184, 166, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(212, 119, 6, 0.1) 0%, transparent 50%);
+}
+
+.mesh-gradient {
+  background: linear-gradient(45deg, 
+    rgba(234, 124, 42, 0.1) 0%, 
+    rgba(20, 184, 166, 0.1) 25%, 
+    rgba(212, 119, 6, 0.1) 50%, 
+    rgba(15, 118, 110, 0.1) 75%, 
+    rgba(234, 124, 42, 0.1) 100%);
+}
+
+/* Floating elements animation */
+@keyframes float-gentle {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+  }
+  33% { 
+    transform: translateY(-10px) rotate(1deg); 
+  }
+  66% { 
+    transform: translateY(-5px) rotate(-1deg); 
+  }
+}
+
+.float-gentle {
+  animation: float-gentle 8s ease-in-out infinite;
 }
