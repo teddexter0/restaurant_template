@@ -1,10 +1,14 @@
 // FILE: src/components/ui/Modal.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
+
+// Workaround until framer-motion types are upgraded.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MDiv: any = motion.div
 
 interface ModalProps {
   isOpen: boolean
@@ -29,6 +33,12 @@ const Modal = ({
   showCloseButton = true,
   className
 }: ModalProps) => {
+  const modalRef = useRef<HTMLDivElement | null>(null)
+  const previousActiveRef = useRef<HTMLElement | null>(null)
+  const idRef = useRef<string>(`modal-${Math.random().toString(36).slice(2, 9)}`)
+  const titleId = title ? `${idRef.current}-title` : undefined
+  const descId = description ? `${idRef.current}-desc` : undefined
+
   // Close on Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -48,7 +58,20 @@ const Modal = ({
     }
   }, [isOpen, onClose])
 
-  const sizeClasses = {
+  // Focus management: save previous active element, focus modal, restore on close
+  useEffect(() => {
+    if (isOpen) {
+      previousActiveRef.current = document.activeElement as HTMLElement | null
+      // focus the modal container after mount
+      setTimeout(() => {
+        modalRef.current?.focus()
+      }, 0)
+    } else {
+      previousActiveRef.current?.focus?.()
+    }
+  }, [isOpen])
+
+  const sizeClasses: Record<NonNullable<ModalProps['size']>, string> = {
     sm: 'max-w-md',
     md: 'max-w-lg',
     lg: 'max-w-2xl',
@@ -61,7 +84,8 @@ const Modal = ({
       {isOpen && (
         <>
           {/* Backdrop */}
-          <motion.div
+          <MDiv
+            key="backdrop"
             className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -72,7 +96,13 @@ const Modal = ({
 
           {/* Modal */}
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
+            <MDiv
+              ref={modalRef}
+              tabIndex={-1}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
+              aria-describedby={descId}
               className={cn(
                 'relative w-full bg-white rounded-2xl shadow-2xl',
                 sizeClasses[size],
@@ -81,33 +111,34 @@ const Modal = ({
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ 
-                duration: 0.2, 
-                type: "spring", 
-                stiffness: 300, 
-                damping: 30 
+              transition={{
+                duration: 0.2,
+                type: 'spring',
+                stiffness: 300,
+                damping: 30
               }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               {/* Header */}
               {(title || showCloseButton) && (
                 <div className="flex items-center justify-between p-6 border-b border-warm-200">
                   <div>
                     {title && (
-                      <h2 className="text-2xl font-bold text-secondary-900">
+                      <h2 id={titleId} className="text-2xl font-bold text-secondary-900">
                         {title}
                       </h2>
                     )}
                     {description && (
-                      <p className="text-secondary-600 mt-1">
+                      <p id={descId} className="text-secondary-600 mt-1">
                         {description}
                       </p>
                     )}
                   </div>
-                  
+
                   {showCloseButton && (
                     <button
                       onClick={onClose}
+                      aria-label="Close modal"
                       className="p-2 text-secondary-400 hover:text-secondary-600 hover:bg-warm-100 rounded-full transition-colors duration-200"
                     >
                       <XMarkIcon className="w-6 h-6" />
@@ -117,13 +148,15 @@ const Modal = ({
               )}
 
               {/* Content */}
-              <div className={cn(
-                'p-6',
-                size === 'full' && 'max-h-[80vh] overflow-y-auto'
-              )}>
+              <div
+                className={cn(
+                  'p-6',
+                  size === 'full' && 'max-h-[80vh] overflow-y-auto'
+                )}
+              >
                 {children}
               </div>
-            </motion.div>
+            </MDiv>
           </div>
         </>
       )}
@@ -140,21 +173,19 @@ interface ModalTriggerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
 }
 
-const ModalTrigger = ({ 
-  children, 
-  modal, 
-  title, 
-  description, 
-  size = 'md' 
+const ModalTrigger = ({
+  children,
+  modal,
+  title,
+  description,
+  size = 'md'
 }: ModalTriggerProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
     <>
-      <div onClick={() => setIsOpen(true)}>
-        {children}
-      </div>
-      
+      <div onClick={() => setIsOpen(true)}>{children}</div>
+
       <Modal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
@@ -195,7 +226,7 @@ const ConfirmModal = ({
     onClose()
   }
 
-  const variantColors = {
+  const variantColors: Record<'danger' | 'warning' | 'info', string> = {
     danger: 'bg-red-500 hover:bg-red-600',
     warning: 'bg-yellow-500 hover:bg-yellow-600',
     info: 'bg-primary-500 hover:bg-primary-600'
